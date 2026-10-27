@@ -2,38 +2,16 @@
 
 namespace App\Models;
 
-class Author
-{
-    private $authors = [
-        [
-            'id' => 1,
-            'name' => 'Andrea Hirata',
-            'country' => 'Indonesia'
-        ],
-        [
-            'id' => 2,
-            'name' => 'Tere Liye',
-            'country' => 'Indonesia'
-        ],
-        [
-            'id' => 3,
-            'name' => 'Dee Lestari',
-            'country' => 'Indonesia'
-        ],
-        [
-            'id' => 4,
-            'name' => 'J.K. Rowling',
-            'country' => 'Inggris'
-        ],
-        [
-            'id' => 5,
-            'name' => 'George Orwell',
-            'country' => 'Inggris'
-        ],
-    ];
+use Illuminate\Database\Eloquent\Model;
 
-    public function getAuthors()
+class Author extends Model
+{
+    protected $table = 'authors';
+
+    protected $fillable = ['name', 'email', 'bio'];
+
+    public function books()
     {
-        return $this->authors;
+        return $this->hasMany(Book::class);
     }
 }

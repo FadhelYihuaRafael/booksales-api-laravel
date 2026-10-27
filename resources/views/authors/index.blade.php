@@ -48,16 +48,18 @@
             <tr>
                 <th>ID</th>
                 <th>Nama Author</th>
-                <th>Negara</th>
+                <th>Email</th>
+                <th>Bio</th>
             </tr>
         </thead>
 
         <tbody>
             @foreach ($authors as $author)
                 <tr>
-                    <td>{{ $author['id'] }}</td>
-                    <td>{{ $author['name'] }}</td>
-                    <td>{{ $author['country'] }}</td>
+                    <td>{{ $author->id }}</td>
+                    <td>{{ $author->name }}</td>
+                    <td>{{ $author->email }}</td>
+                    <td>{{ $author->bio }}</td>
                 </tr>
             @endforeach
         </tbody>
