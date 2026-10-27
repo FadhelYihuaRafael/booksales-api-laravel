@@ -10,8 +10,10 @@ class AuthorController extends Controller
     {
         $authors = Author::all();
 
-        return view('authors.index', [
-            'authors' => $authors
-        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Get all authors successfully',
+            'data'    => $authors
+        ], 200);
     }
 }
