@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use Illuminate\View\View;
 
 class BookController extends Controller
 {
-    public function index(): View
+    public function index()
     {
-        $books = Book::with('author')->get();
+        $books = Book::all();
 
-        return view('books.index', compact('books'));
+        return response()->json([
+            'success' => true,
+            'message' => 'Get all books successfully',
+            'data'    => $books
+        ], 200);
     }
 }
