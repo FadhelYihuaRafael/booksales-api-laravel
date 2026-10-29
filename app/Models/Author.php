@@ -8,7 +8,14 @@ class Author extends Model
 {
     protected $table = 'authors';
 
-    protected $fillable = ['name', 'email', 'bio'];
+    public $timestamps = false;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'photo',
+        'bio',
+    ];
 
     public function books()
     {
