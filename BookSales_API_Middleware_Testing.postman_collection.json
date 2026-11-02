@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "b3e71029-7c89-41e2-a083-d34e9e075b2d",
-		"name": "BookSales API - Middleware & Routing",
-		"description": "Koleksi Postman untuk pengujian Middleware, Autentikasi Sanctum, dan Role Admin pada Genre & Author.",
+		"name": "BookSales API - Pertemuan 6 & 7",
+		"description": "Koleksi Postman untuk pengujian Middleware, Hak Akses Admin & Customer, serta CRUD Genre, Author, dan Transaksi dengan Relasi Model.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -133,7 +133,7 @@
 					"response": []
 				},
 				{
-					"name": "Login sebagai User Biasa",
+					"name": "Login sebagai Customer",
 					"event": [
 						{
 							"listen": "test",
@@ -141,7 +141,7 @@
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"if (jsonData.access_token) {",
-									"    pm.collectionVariables.set(\"user_token\", jsonData.access_token);",
+									"    pm.collectionVariables.set(\"customer_token\", jsonData.access_token);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -164,7 +164,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password\"\n}"
+							"raw": "{\n    \"email\": \"customer@example.com\",\n    \"password\": \"password\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/login",
@@ -175,7 +175,7 @@
 					"response": []
 				},
 				{
-					"name": "Register User Baru",
+					"name": "Register Customer Baru",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -192,7 +192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Budi Santoso\",\n    \"email\": \"budi@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"user\"\n}"
+							"raw": "{\n    \"name\": \"Siti Nurhaliza\",\n    \"email\": \"siti@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"customer\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/register",
@@ -205,7 +205,7 @@
 			]
 		},
 		{
-			"name": "3. Admin Only (Create, Update, Destroy)",
+			"name": "3. Admin Only - Genre & Author",
 			"item": [
 				{
 					"name": "Create Genre (Admin Token)",
@@ -351,44 +351,6 @@
 					"response": []
 				},
 				{
-					"name": "Update Author (Admin Token)",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{admin_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Andrea Hirata, S.E., M.Sc.\",\n    \"bio\": \"Penulis tetralogi Laskar Pelangi\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/authors/1",
-							"host": ["{{base_url}}"],
-							"path": ["api", "authors", "1"]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Delete Author (Admin Token)",
 					"request": {
 						"auth": {
@@ -420,45 +382,31 @@
 			]
 		},
 		{
-			"name": "4. Testing Proteksi Middleware (Harus Gagal)",
+			"name": "4. Pertemuan 7 - Transaksi (CRUD)",
 			"item": [
 				{
-					"name": "Create Genre TANPA Token (Harus 401 Unauthenticated)",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
+					"name": "Customer - Create Transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set(\"transaction_id\", jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
 							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Sci-Fi\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/genres",
-							"host": ["{{base_url}}"],
-							"path": ["api", "genres"]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Genre DENGAN Token User Biasa (Harus 403 Forbidden)",
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{user_token}}",
+									"value": "{{customer_token}}",
 									"type": "string"
 								}
 							]
@@ -478,12 +426,257 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Sci-Fi\"\n}"
+							"raw": "{\n    \"book_id\": 1,\n    \"quantity\": 2,\n    \"total_amount\": 150000,\n    \"status\": \"pending\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/genres",
+							"raw": "{{base_url}}/api/transactions",
 							"host": ["{{base_url}}"],
-							"path": ["api", "genres"]
+							"path": ["api", "transactions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer - Show Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/{{transaction_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "{{transaction_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer - Update Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\": 3,\n    \"total_amount\": 225000,\n    \"status\": \"paid\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions/{{transaction_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "{{transaction_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin - Read All Transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin - Destroy Transaction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/{{transaction_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "{{transaction_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Testing Hak Akses Transaksi (Harus Ditolak)",
+			"item": [
+				{
+					"name": "Customer Coba Read All Transactions (Harus 403 Forbidden)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer Coba Destroy Transaction (Harus 403 Forbidden)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Coba Create Transaction (Harus 403 Forbidden)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"book_id\": 1,\n    \"quantity\": 1,\n    \"total_amount\": 50000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tanpa Token Coba Akses Transaksi (Harus 401 Unauthenticated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
 						}
 					},
 					"response": []
@@ -503,10 +696,14 @@
 			"type": "string"
 		},
 		{
-			"key": "user_token",
+			"key": "customer_token",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "transaction_id",
+			"value": "1",
 			"type": "string"
 		}
 	]
 }
-

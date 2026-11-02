@@ -23,6 +23,16 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // Akun Customer
+        User::firstOrCreate(
+            ['email' => 'customer@example.com'],
+            [
+                'name'     => 'Customer Satu',
+                'password' => Hash::make('password'),
+                'role'     => 'customer',
+            ]
+        );
+
         // Akun User Biasa
         User::firstOrCreate(
             ['email' => 'user@example.com'],
@@ -34,4 +44,3 @@ class UserSeeder extends Seeder
         );
     }
 }
-
