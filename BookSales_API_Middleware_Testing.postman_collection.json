@@ -1,0 +1,512 @@
+{
+	"info": {
+		"_postman_id": "b3e71029-7c89-41e2-a083-d34e9e075b2d",
+		"name": "BookSales API - Middleware & Routing",
+		"description": "Koleksi Postman untuk pengujian Middleware, Autentikasi Sanctum, dan Role Admin pada Genre & Author.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Public (Tanpa Autentikasi)",
+			"item": [
+				{
+					"name": "Read All Genres",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Genre by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read All Authors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/authors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "authors"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Author by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/authors/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "authors", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Autentikasi (Auth)",
+			"item": [
+				{
+					"name": "Login sebagai Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set(\"admin_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login sebagai User Biasa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set(\"user_token\", jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register User Baru",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Budi Santoso\",\n    \"email\": \"budi@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "register"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Admin Only (Create, Update, Destroy)",
+			"item": [
+				{
+					"name": "Create Genre (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Horor\",\n    \"description\": \"Buku-buku bernuansa seram dan misteri\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Genre (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Horor Thriller\",\n    \"description\": \"Buku cerita horor dan menegangkan\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Genre (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrea Hirata\",\n    \"email\": \"andrea@example.com\",\n    \"bio\": \"Penulis novel Laskar Pelangi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/authors",
+							"host": ["{{base_url}}"],
+							"path": ["api", "authors"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrea Hirata, S.E., M.Sc.\",\n    \"bio\": \"Penulis tetralogi Laskar Pelangi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/authors/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "authors", "1"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Author (Admin Token)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/authors/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "authors", "1"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Testing Proteksi Middleware (Harus Gagal)",
+			"item": [
+				{
+					"name": "Create Genre TANPA Token (Harus 401 Unauthenticated)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sci-Fi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre DENGAN Token User Biasa (Harus 403 Forbidden)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sci-Fi\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": ["{{base_url}}"],
+							"path": ["api", "genres"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
